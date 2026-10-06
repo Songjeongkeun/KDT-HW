@@ -1,0 +1,5 @@
+path: /Users/songjeong-geun/Desktop/KDT/과제/이안류 CCTV 데이터/yolo_ripcurrent_detect
+train: images/train
+val: images/val
+names:
+  0: 이안류

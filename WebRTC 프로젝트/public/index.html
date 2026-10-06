@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC 1:1 화상 스터디룸</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="sidebar" aria-label="방 입장 및 연결 상태">
+        <div>
+          <p class="eyebrow">WebRTC Study Room</p>
+          <h1>1:1 화상 스터디룸</h1>
+          <p class="intro">
+            방 번호를 공유하고 같은 방에 입장하면 브라우저끼리 직접 영상과
+            음성을 주고받습니다.
+          </p>
+        </div>
+
+        <form id="joinForm" class="join-form">
+          <label for="roomInput">방 번호</label>
+          <input
+            id="roomInput"
+            name="room"
+            type="text"
+            value="study-room"
+            autocomplete="off"
+            required
+          />
+
+          <label for="nicknameInput">닉네임</label>
+          <input
+            id="nicknameInput"
+            name="nickname"
+            type="text"
+            value="학생"
+            autocomplete="off"
+          />
+
+          <button type="submit" id="joinButton">입장하기</button>
+        </form>
+
+        <div class="status-panel">
+          <div>
+            <span class="label">방</span>
+            <strong id="roomLabel">입장 전</strong>
+          </div>
+          <div>
+            <span class="label">연결</span>
+            <strong id="connectionLabel">대기 중</strong>
+          </div>
+          <div>
+            <span class="label">ICE</span>
+            <strong id="iceLabel">대기 중</strong>
+          </div>
+        </div>
+
+        <div class="log-panel" aria-label="연결 로그">
+          <div class="log-title">연결 로그</div>
+          <ul id="logList"></ul>
+        </div>
+      </section>
+
+      <section class="call-area" aria-label="화상 통화 화면">
+        <div class="video-grid">
+          <article class="video-tile">
+            <video id="localVideo" autoplay muted playsinline></video>
+            <div class="video-caption">나</div>
+          </article>
+
+          <article class="video-tile">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="video-caption">상대방</div>
+          </article>
+        </div>
+
+        <div class="toolbar" aria-label="통화 제어">
+          <button id="micButton" type="button" disabled>마이크 끄기</button>
+          <button id="cameraButton" type="button" disabled>카메라 끄기</button>
+          <button id="screenButton" type="button" disabled>화면 공유</button>
+          <button id="leaveButton" type="button" disabled>나가기</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+# Operating-system, editor, and interpreter artifacts
+.DS_Store
+.gitkeep
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.vscode/
+node_modules/
+.env
+.env.*
+
+# Local datasets, model weights, experiment output, and archives
+data/
+datasets/
+runs/
+outputs/
+results/
+results_*/
+*.pt
+*.pth
+*.bin
+*.zip
+*.7z
+*.tar
+*.gz
+
+# 34 GB raw rip-current CCTV dataset
+290.이안류 CCTV 데이터/
+290.이안류 CCTV 데이터.zip
+이안류 CCTV 데이터/yolo_ripcurrent_detect/images/
+이안류 CCTV 데이터/yolo_ripcurrent_detect/labels/
+290.*/
+**/yolo_ripcurrent_detect/images/
+**/yolo_ripcurrent_detect/labels/
+*.cache
+
+# These are independent repositories and are pushed to their own remotes.
+FaceID/faceID/
+WebRTC 프로젝트/WebRTC-/
+WebRTC*/WebRTC-/
+나만의 맛집 리스트/

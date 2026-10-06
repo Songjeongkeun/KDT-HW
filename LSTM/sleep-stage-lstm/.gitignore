@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+data/raw/*.edf
+results/model.pt
+results_weighted/model.pt
+

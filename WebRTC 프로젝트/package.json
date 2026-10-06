@@ -1,0 +1,16 @@
+{
+  "name": "webrtc-study-room",
+  "version": "1.0.0",
+  "description": "WebRTC 기반 1:1 화상 스터디룸 예제",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "server": "node server.js",
+    "server.js": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.3",
+    "socket.io": "^4.7.5"
+  }
+}
