@@ -1,7 +1,7 @@
-"""Download one Sleep-EDF Expanded hypnogram per subject.
+"""Sleep-EDF Expanded 데이터에서 대상자별 Hypnogram 파일 하나를 내려받는다.
 
-Only the small expert-annotation files are downloaded. The multi-gigabyte PSG
-signal files are intentionally excluded from this mini project.
+용량이 작은 전문가 주석 파일만 내려받으며, 수 GB에 이르는 PSG 신호 파일은
+이 미니 프로젝트에서 의도적으로 제외한다.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ class LinkParser(HTMLParser):
 
 
 def list_hypnograms() -> list[str]:
-    request = Request(BASE_URL, headers={"User-Agent": "sleep-stage-lstm-course-project/1.0"})
+    request = Request(BASE_URL, headers={"User-Agent": "Sleep_pattern-course-project/1.0"})
     with urlopen(request, timeout=30) as response:
         html = response.read().decode("utf-8")
     parser = LinkParser()
@@ -41,7 +41,7 @@ def list_hypnograms() -> list[str]:
 def first_night_per_subject(files: list[str], max_subjects: int) -> list[str]:
     selected: dict[str, str] = {}
     for filename in files:
-        # SC4001 and SC4002 are two nights from subject SC400.
+        # SC4001과 SC4002는 동일한 대상자 SC400의 서로 다른 두 밤 기록이다.
         subject_id = filename[:5]
         selected.setdefault(subject_id, filename)
     return list(selected.values())[:max_subjects]
@@ -63,7 +63,7 @@ def main() -> None:
             continue
         request = Request(
             urljoin(BASE_URL, filename),
-            headers={"User-Agent": "sleep-stage-lstm-course-project/1.0"},
+            headers={"User-Agent": "Sleep_pattern-course-project/1.0"},
         )
         with urlopen(request, timeout=30) as response:
             destination.write_bytes(response.read())
@@ -74,4 +74,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

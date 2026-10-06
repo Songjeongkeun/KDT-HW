@@ -1,4 +1,4 @@
-"""Train and evaluate an LSTM for next sleep-stage prediction."""
+"""다음 수면 단계를 예측하는 LSTM을 학습하고 평가한다."""
 
 from __future__ import annotations
 
@@ -71,7 +71,7 @@ class SleepStageLSTM(nn.Module):
         self.classifier = nn.Linear(hidden_size, len(STAGES))
 
     def _initialize_forget_gate_bias(self, value: float) -> None:
-        """Initially favor retaining useful state through the LSTM forget gate."""
+        """초기 학습에서 LSTM forget gate가 유용한 상태를 유지하도록 유도한다."""
         start, end = self.lstm.hidden_size, self.lstm.hidden_size * 2
         with torch.no_grad():
             for name, bias in self.lstm.named_parameters():
@@ -94,7 +94,7 @@ def set_seed(seed: int) -> None:
 
 
 def get_device(requested: str = "auto") -> torch.device:
-    """Select the requested accelerator, preferring Apple Silicon MPS in auto mode."""
+    """요청한 연산 장치를 선택하며 자동 모드에서는 Apple Silicon MPS를 우선한다."""
     mps_backend = getattr(torch.backends, "mps", None)
     mps_available = mps_backend is not None and mps_backend.is_available()
     cuda_available = torch.cuda.is_available()
@@ -310,7 +310,9 @@ def train_model(
 
 def save_history(history: list[dict[str, float]], path: Path) -> None:
     with path.open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=["epoch", "train_loss", "val_loss"])
+        writer = csv.DictWriter(
+            file, fieldnames=["epoch", "train_loss", "val_loss", "gradient_norm"]
+        )
         writer.writeheader()
         writer.writerows(history)
 
