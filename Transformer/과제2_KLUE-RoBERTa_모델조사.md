@@ -1,0 +1,61 @@
+# 과제 2. Transformer 기반 모델 조사: KLUE-RoBERTa-base
+
+## 1. 모델 이름
+
+**KLUE-RoBERTa-base**이며, Hugging Face 모델 식별자는 [`klue/roberta-base`](https://huggingface.co/klue/roberta-base)이다. KLUE 연구진이 한국어로 처음부터 사전학습한 RoBERTa 계열 모델이다. 논문에 보고된 모델 크기는 약 **1억 1천만 개(110M) 파라미터**다.[^klue]
+
+## 2. 모델이 발표된 배경
+
+영어에는 GLUE와 같은 표준 언어 이해 평가 체계가 있었지만, 한국어 사전학습 모델은 공통 기준에서 체계적으로 비교하기 어려웠다. 이를 해결하기 위해 KLUE 연구진은 한국어 자연어 이해 과제 8종을 모은 **KLUE(Korean Language Understanding Evaluation)** 벤치마크를 구축했다. 동시에 누구나 벤치마크 기준선을 재현하고 한국어 연구에 활용할 수 있도록 KLUE-BERT와 KLUE-RoBERTa를 공개했다. KLUE 논문은 2021년에 발표되었다.[^klue]
+
+## 3. Encoder / Decoder / Encoder-Decoder 중 어떤 구조인지
+
+**Encoder-only 구조**다. 여러 개의 Transformer 인코더 층에서 양방향 self-attention으로 입력 문장의 앞뒤 문맥을 함께 분석한다. `base` 크기는 **인코더 12층, hidden size 768, attention head 12개**를 사용한다.[^repo] 원래의 Transformer는 번역을 위해 encoder와 decoder를 모두 사용하지만, KLUE-RoBERTa는 decoder가 없는 언어 이해용 모델이다.[^transformer]
+
+현재 미니 프로젝트에서는 이 인코더의 각 토큰 출력 위에 **질의응답(QA) 헤드**를 추가해, 주어진 문단에서 정답의 시작·끝 토큰 위치를 예측한다. 이 QA 헤드는 파인튜닝 단계의 작업별 구성 요소이며, 사전학습 모델 자체가 처음부터 KorQuAD 정답을 예측하도록 훈련된 것은 아니다.[^klue]
+
+## 4. 사전학습 방식
+
+- 약 **62.65GB의 한국어 텍스트**(모두의 말뭉치, CC-100-Kor, 나무위키, 뉴스 크롤링, 청와대 국민청원)를 모아 사전학습했다.[^klue]
+- **MLM(Masked Language Modeling)**: 입력 일부를 가리고 원래 토큰을 맞히도록 학습한다. KLUE-RoBERTa-base에는 학습 중 마스킹 위치가 달라지는 **동적 마스킹**과 한 단어를 이루는 토큰들을 함께 가리는 **whole-word masking**이 적용됐다. BERT의 다음 문장 예측(NSP)은 사용하지 않는다.[^klue][^roberta]
+- 한국어의 어미·조사 같은 형태소 특성을 반영하려고 **형태소 기반 서브워드 토큰화**를 사용했다. 어휘 구축 시 형태소 분석 후 서브워드 단위로 분할하며, 추론 때마다 형태소 분석기를 실행할 필요는 없다. 어휘 크기는 32k이다.[^klue]
+- 논문 기준 최대 입력 길이는 **512토큰**이며, `base` 모델은 **100만 학습 단계, 배치 크기 2,048**로 사전학습했다.[^klue]
+
+## 5. 기존 Transformer와 달라진 점
+
+| 비교 대상 | 차이 |
+| --- | --- |
+| 원래 Transformer | 번역을 위한 **encoder–decoder**에서 **encoder-only**로 바뀌었다. 출력 문장을 순차 생성하는 대신 입력의 문맥 표현을 만든다.[^transformer] |
+| BERT | 기본 인코더 구조는 유사하지만, RoBERTa 계열의 학습 방식을 따라 **동적 마스킹**과 **NSP 제거** 등을 적용했다. RoBERTa의 핵심 변화는 새로운 attention 구조보다 사전학습 절차의 개선이다.[^roberta][^klue] |
+| 일반 영문 RoBERTa | **한국어 말뭉치**로 학습하고 한국어 형태소 특성을 반영한 **서브워드 어휘**를 만들었다. 원본 영문 RoBERTa의 byte-level BPE 토크나이저를 그대로 쓰지 않는다. 이 모델의 Hugging Face 모델 카드는 `AutoTokenizer`가 `BertTokenizer`를 불러온다고 명시한다.[^klue][^model] |
+
+## 6. 해당 모델이 잘하는 작업
+
+한국어 **텍스트 분류, 문장 유사도, 자연어 추론, 개체명 인식, 관계 추출, 문서 독해** 등 입력을 이해하는 작업에 적합하다. 다만 작업별 학습 데이터와 출력 헤드를 이용한 **파인튜닝이 필요**하다. KLUE 논문의 같은 규모(`base`) 모델 비교에서는 KLUE-RoBERTa-base가 한국어 **관계 추출**과 **문서 독해(KLUE-MRC)**에서 가장 좋은 성적을 보였다. 이것은 KLUE 벤치마크의 결과이며, 현재 프로젝트의 **KorQuAD 성능을 보장하거나 대신하는 수치가 아니다.**[^klue]
+
+## 7. 모델의 장점과 단점
+
+**장점**
+
+- 대규모 한국어 말뭉치와 한국어에 맞춘 토큰화로 한국어 문맥을 잘 표현할 수 있다.[^klue]
+- 같은 사전학습 가중치에 작업별 헤드를 붙여 여러 한국어 이해 과제로 전이할 수 있다.[^klue]
+- `large`보다 작은 `base` 모델이라 개인 프로젝트에서 파인튜닝 실험을 설계하기에 상대적으로 부담이 낮다. 단, GPU 메모리 요구량은 입력 길이와 배치 크기에 따라 달라진다.
+
+**단점**
+
+- 한 번에 처리할 수 있는 길이가 최대 512토큰 수준이다. 긴 문서 질의응답에는 문단 분할·슬라이딩 윈도·검색 단계가 필요하다.[^klue]
+- Encoder-only 모델이므로 BART·T5처럼 자유로운 문장 생성이나 요약을 위한 기본 구조는 아니다.[^transformer]
+- 대규모 사전학습 데이터에 포함된 편향이나 유해 표현의 영향이 남을 수 있다. KLUE 논문도 사전학습 말뭉치에서 이런 표현을 완전히 제거하지 못했다고 밝힌다.[^klue]
+- 현재 프로젝트의 **추출형 질의응답**에서는 제공된 문단 밖의 답을 새로 만들 수 없고, 다른 분야 문서에서는 성능이 달라질 수 있다. 이는 모델 구조와 적용 방식에서 도출되는 한계이며, 별도 평가 없이 모든 분야에서 우수하다고 주장할 수 없다.
+
+## 미니 프로젝트와의 연결
+
+[한국어 문서 질의응답 노트북](한국어_문서_질의응답_KorQuAD.ipynb)에서는 `klue/roberta-base`를 KorQuAD 1.0에 파인튜닝한다. 질문과 문단을 토큰화한 후 정답 구간의 시작·끝 토큰을 학습하고, 새로운 질문에 대해 **문단에 실제로 존재하는 답변 구절**을 예측한다. 이 과정은 위에서 설명한 **MLM 사전학습**과 구분되는 **다운스트림 파인튜닝**이다.
+
+## 참고 문헌
+
+[^klue]: Park et al., [*KLUE: Korean Language Understanding Evaluation*](https://arxiv.org/pdf/2105.09680), 2021, §4–6.
+[^model]: Hugging Face, [`klue/roberta-base` 모델 카드](https://huggingface.co/klue/roberta-base).
+[^repo]: KLUE 연구진, [공식 GitHub 저장소](https://github.com/KLUE-benchmark/KLUE).
+[^roberta]: Liu et al., [*RoBERTa: A Robustly Optimized BERT Pretraining Approach*](https://arxiv.org/abs/1907.11692), 2019.
+[^transformer]: Vaswani et al., [*Attention Is All You Need*](https://arxiv.org/abs/1706.03762), 2017.

@@ -1,0 +1,15 @@
+# Local Python environment and caches
+.venv/
+.hf_cache/
+__pycache__/
+
+# Large or regenerable training artifacts
+outputs/**/model/
+outputs/**/checkpoints/
+outputs/**/*.log
+outputs/**/predictions.csv
+
+# Editor and operating-system files
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db

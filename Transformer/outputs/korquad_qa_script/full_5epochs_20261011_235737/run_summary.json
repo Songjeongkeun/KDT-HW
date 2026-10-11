@@ -1,0 +1,23 @@
+{
+  "model": "klue/roberta-base",
+  "dataset": "KorQuAD/squad_kor_v1",
+  "seed": 2026,
+  "device": "cuda",
+  "smoke_test": false,
+  "train_examples": 55130,
+  "selection_examples": 5277,
+  "public_validation_examples": 5774,
+  "train_features": 63503,
+  "selection_features": 5896,
+  "num_train_epochs": 5,
+  "training_metrics": {
+    "train_runtime": 3952.7674,
+    "train_samples_per_second": 80.327,
+    "train_steps_per_second": 5.021,
+    "total_flos": 6.222422978627328e+16,
+    "train_loss": 0.23973581972936744,
+    "epoch": 5.0
+  },
+  "best_checkpoint": "outputs\\korquad_qa_script\\full_5epochs_20261011_235737\\checkpoints\\checkpoint-3969",
+  "best_eval_loss": 0.36738473176956177
+}
