@@ -1,0 +1,12 @@
+# Python 3.12; versions used in the recorded experiment.
+# Install CUDA-enabled torch/torchvision first when using an NVIDIA GPU.
+torch==2.7.1
+torchvision==0.22.1
+ultralytics==8.4.163
+opencv-python==5.0.0.93
+numpy==2.5.2
+pandas==3.0.6
+matplotlib==3.11.2
+PyYAML==6.0.3
+ipykernel==7.3.0
+jupyter-server==2.21.1

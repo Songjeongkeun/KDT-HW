@@ -1,0 +1,34 @@
+# Local environments, Jupyter runtime, and credentials
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.env
+.env.*
+*.log
+jpserver-*
+kernel-*.json
+
+# Datasets and generated training/inference artifacts
+290.*/
+data/
+datasets/
+yolo_ripcurrent_detect/images/
+yolo_ripcurrent_detect/labels/
+runs/
+weights/
+*.cache
+*.pt
+*.pth
+*.onnx
+*.zip
+*.7z
+*.tar
+*.gz
+
+# New CCTV inputs must remain local
+inputs/*
+!inputs/README.md
+.DS_Store
+Thumbs.db

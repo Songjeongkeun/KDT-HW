@@ -1,4 +1,5 @@
-path: /Users/songjeong-geun/Desktop/KDT/과제/이안류 CCTV 데이터/yolo_ripcurrent_detect
+# Portable template. The notebook rewrites this file for the local dataset.
+# Without an absolute path, the YAML file's directory is the dataset root.
 train: images/train
 val: images/val
 names:
